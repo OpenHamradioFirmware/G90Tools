@@ -21,7 +21,7 @@ The firmware is encrypted with is AES256 ECB.
 The key can be extracted with the following method:
 - Connect an SWD debugger (ST-Link, CMSIS-DAP, J-Link etc).
 - Reset the device without attaching the debugger.
-- Load a firmware over UART
+- Load a firmware over UART.
 - While the upload is running, attach openocd (e.g. `openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c "init;"`)
 - Dump the ram
 - Run [findaes](https://sourceforge.net/projects/findaes/) on the dump to find the key
@@ -33,9 +33,11 @@ To extract the bootloader firmware:
 ```
 cd extract_bl
 make KEY=... TTYUSB=/dev/ttyUSB0 flash-encrypted
-# Power-cycle the device
 ```
-- Log the uart output to a file
+- Log the uart output to a file: `cat /dev/ttyUSB0 > bl.hex`
+- Power cycle the device.
+- Wait for the dump to complete.
+- Convert hex to bin: `xxd -g 1 -r < bl.hex > bl.bin`
 
 ## External tools
 

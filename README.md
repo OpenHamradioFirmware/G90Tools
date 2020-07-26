@@ -28,6 +28,15 @@ The key can be extracted with the following method:
 
 To encrypt and decrypt firmware, see encryption/decrypt.py and encryption/encrypt.py.
 
+To extract the bootloader firmware:
+- Build and flash the extract_bl firmware:
+```
+cd extract_bl
+make KEY=... TTYUSB=/dev/ttyUSB0 flash-encrypted
+# Power-cycle the device
+```
+- Log the uart output to a file
+
 ## External tools
 
 - [DaleFarnsworth/g90updatefw](https://github.com/DaleFarnsworth/g90updatefw)

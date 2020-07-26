@@ -12,7 +12,7 @@ static void initUsart(void) {
 	// Enable peripheral clock
 	rcc_periph_clock_enable(RCC_USART3);
 
-	// Setup USART3 on PA9
+	// Setup USART3 on PB10
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO10);
 
 	// Handle the baud settings

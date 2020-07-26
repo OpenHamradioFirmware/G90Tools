@@ -8,7 +8,7 @@
 
 
 const char nibble_to_hex_upper[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                      'A', 'B', 'C', 'D', 'E', 'F'};
+									  'A', 'B', 'C', 'D', 'E', 'F'};
 
 static void initUsart(void) {
 	// Enable peripheral clock
@@ -18,7 +18,7 @@ static void initUsart(void) {
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO10);
 
 	// Handle the baud settings
-    usart_set_mode(USART3, USART_MODE_TX);
+	usart_set_mode(USART3, USART_MODE_TX);
 	usart_set_baudrate(USART3, 115200);
 	usart_set_databits(USART3, 8);
 	usart_set_parity(USART3, USART_PARITY_NONE);
@@ -33,7 +33,7 @@ int main(void)
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 	uint8_t *flash = (uint8_t *) 0x08000000;
 
-    initUsart();
+	initUsart();
 
 	while (true) {
 		for (uint32_t i = 0; i < (1 << 18); i++) {
@@ -42,11 +42,11 @@ int main(void)
 
 		for (uint32_t i = 0; i < 0x4000; i++) {
 			uint8_t c = flash[i];
-        	usart_send_blocking(USART3, nibble_to_hex_upper[(c >> 4) & 0x0F]);
-        	usart_send_blocking(USART3, nibble_to_hex_upper[c & 0x0F]);
-        	usart_send_blocking(USART3, ' ');
+			usart_send_blocking(USART3, nibble_to_hex_upper[(c >> 4) & 0x0F]);
+			usart_send_blocking(USART3, nibble_to_hex_upper[c & 0x0F]);
+			usart_send_blocking(USART3, ' ');
 			if (i % 16 == 15) {
-	        	usart_send_blocking(USART3, '\n');
+				usart_send_blocking(USART3, '\n');
 			}
 		}
 

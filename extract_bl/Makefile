@@ -52,7 +52,6 @@ $(FIRMWARE_ENC): $(FIRMWARE_BIN)
 flash-encrypted: $(FIRMWARE_ENC)
 	g90updatefw $(FIRMWARE_ENC) $(TTYUSB)
 
-
 flash: $(FIRMWARE_ELF)
 	$(OPENOCD) -f interface/jlink.cfg -c "transport select swd" -f target/stm32f1x.cfg -c "program $(FIRMWARE_ELF) verify reset exit"
 
@@ -60,6 +59,6 @@ clean:
 	$(RM) $(FIRMWARE_ELF) $(FIRMWARE_BIN) $(FIRMWARE_HEX) $(FIRMWARE_ENC)
 
 distclean: clean
-	$(MAKE) -C libopencm3 clean
+	$(MAKE) -C $(LIBOPENCM3_ROOT) clean
 
 .PHONY: all flash clean distclean

@@ -1,4 +1,5 @@
 import sys
+from Crypto.Cipher import AES
 
 if len(sys.argv) != 4:
     print("Usage: {} <key in hex> <plaintext.bin> <encrypted.bin>".format(sys.argv[0]))
@@ -6,10 +7,8 @@ if len(sys.argv) != 4:
 
 KEY = bytes.fromhex(sys.argv[1])
 
-from Crypto.Cipher import AES
 cipher = AES.new(KEY, AES.MODE_ECB)
 
-import sys
 with open(sys.argv[2], 'rb') as f_in:
     with open(sys.argv[3], 'wb') as f_out:
         while True:
@@ -19,3 +18,5 @@ with open(sys.argv[2], 'rb') as f_in:
             
             block_encrypted = cipher.encrypt(block)
             f_out.write(block_encrypted)
+        f_out.close()
+    f_in.close()

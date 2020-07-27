@@ -3,7 +3,7 @@ Updates the bandedges for firmware 1.74 only.
 ```
 'Usage: patch_edges.py <decrypted dispunit firmware to patch> <channel_file.json>
 ```
-Remember to encrypt the firmware after running this with `encryption/encrypt.py`
+Remember to encrypt the firmware after running this with `encryption/encryption.py`
 
 JSON syntax is as follows (must have exactly 10 channels):
 

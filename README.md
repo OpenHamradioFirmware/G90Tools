@@ -50,8 +50,7 @@ make
 ./findaes ramdump.bin
 ```
 
-To encrypt and decrypt firmware, see [decrypt.py](encryption/decrypt.py). You can encrypt your own firmware using [encrypt.py](encryption/encrypt.py).
-
+To encrypt and decrypt firmware, see [encryption.py](encryption/encryption.py).
 
 ## Bootloader extraction
 

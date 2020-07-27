@@ -47,7 +47,7 @@ $(FIRMWARE_HEX): $(FIRMWARE_ELF)
 	$(OBJCOPY) -O ihex $< $@
 
 $(FIRMWARE_ENC): $(FIRMWARE_BIN)
-	python ../encryption/encrypt.py $(KEY) $(FIRMWARE_BIN) $(FIRMWARE_ENC)
+	python ../encryption/encryption.py $(KEY) encrypt $(FIRMWARE_BIN) $(FIRMWARE_ENC)
 
 flash-encrypted: $(FIRMWARE_ENC)
 	g90updatefw $(FIRMWARE_ENC) $(TTYUSB)

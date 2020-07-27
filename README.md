@@ -2,6 +2,10 @@
 
 This repository contains tools and guides for working with the firmware for the Xiegu G90 HF radio.
 
+## Getting started
+
+Please check out the [wiki](https://github.com/OpenHamradioFirmware/G90Tools/wiki)!
+
 ## Hardware architecture
 
 The Xiegu G90 is built with a detachable display unit and a main unit.

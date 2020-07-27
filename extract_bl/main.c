@@ -47,6 +47,12 @@ int main(void)
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 	uint8_t *flash = (uint8_t *) 0x08000000;
 
+	// Dump only the bootloader
+	const uint32_t dump_size = 0x4000;
+
+	// Uncomment to dump the whole flash
+	// const uint32_t dump_size = 0x40000;
+
 	initUsart();
 
 	while (true) {
@@ -54,7 +60,7 @@ int main(void)
 			__asm__("nop");
 		}
 
-		for (uint32_t i = 0; i < 0x4000; i++) {
+		for (uint32_t i = 0; i < dump_size; i++) {
 			uint8_t c = flash[i];
 
 			if (i % 16 == 0) {

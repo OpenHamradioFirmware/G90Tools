@@ -12,21 +12,48 @@ Main unit:
 Display unit:
 - STM32F103RCT6
 
-## Bootloader
+## Firmware key extraction
 
 The bootloader seems to be very similar in both units. It is able to read an encrypted firmware over UART, then decrypt and write it to the flash.
 
 The firmware is encrypted with is AES256 ECB.
 
+> :warning: The microcontroller has flash readout protection enabled, which means that if you try to disable it, the flash will be erased and your unit will be bricked (unless you can program a bootloader that you have recovered before).
+
 The key can be extracted with the following method:
 - Connect an SWD debugger (ST-Link, CMSIS-DAP, J-Link etc).
 - Reset the device without attaching the debugger.
-- Load a firmware over UART.
-- While the upload is running, attach openocd (e.g. `openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c "init;"`)
-- Dump the ram
-- Run [findaes](https://sourceforge.net/projects/findaes/) on the dump to find the key
+- Load a firmware over UART, e.g. using g90updatefw: 
+```
+# Use any official firmware
+FIRMWARE=G90_MainUnit_FW_V1.74final.xgf
 
-To encrypt and decrypt firmware, see encryption/decrypt.py and encryption/encrypt.py.
+# Use the appropriate tty for your system
+TTYUSB=/dev/ttyUSB0
+
+g90updatefw $FIRMWARE $TTYUSB
+```
+- While the upload is running, attach openocd and dump the ram: 
+```
+# Use the appropriate interface that matches your SWD debugger
+#INTERFACE=cmsis-dap.cfg
+#INTERFACE=stlink.cfg
+
+openocd -f interface/$INTERFACE -f target/stm32f1x.cfg -c "init; dump_image ramdump.bin 0x20000000 0x50000"
+```
+- Run [findaes](https://sourceforge.net/projects/findaes/) to find the key.
+```
+# Download https://sourceforge.net/projects/findaes/files/latest/download
+unzip findaes-1.2.zip
+cd findaes-1.2
+make
+./findaes ramdump.bin
+```
+
+To encrypt and decrypt firmware, see [decrypt.py](encryption/decrypt.py). You can encrypt your own firmware using [encrypt.py](encryption/encrypt.py).
+
+
+## Bootloader extraction
 
 To extract the bootloader firmware:
 - Build and flash the extract_bl firmware:
@@ -42,6 +69,12 @@ make KEY=... TTYUSB=/dev/ttyUSB0 flash-encrypted
 ## External tools
 
 - [DaleFarnsworth/g90updatefw](https://github.com/DaleFarnsworth/g90updatefw)
+
+## Disclaimer
+
+> :warning: Warning :warning:
+
+There is no warranty provided. Any damage caused by using any of these tools is your own responsibility.
 
 ## License
 

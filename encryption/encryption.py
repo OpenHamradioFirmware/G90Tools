@@ -3,7 +3,12 @@ from Crypto.Cipher import AES
 
 def do_encrypt(cipher, args):
     with args.fw_plaintext as f_in, args.fw_encrypted as f_out:
-        f_out.write(cipher.encrypt(f_in.read()))
+        while f_in.readable():
+            block_in = f_in.read(16)
+            block = cipher.encrypt(block_in.ljust(16, b'\x00'))
+            f_out.write(block)
+            if len(block_in) != 16:
+                break
         print(f'success: encrypted firmware written to {f_out.name}')
 
 def do_decrypt(cipher, args):

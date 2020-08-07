@@ -1,19 +1,88 @@
 
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
-// Do a ramdump easily assuming buf ended up @0x20000000 (too lazy to write a proper linker script)
-// export INTERFACE=cmsis-dap.cfg
-// export INTERFACE=stlink.cfg
-// openocd -f interface/$INTERFACE -f target/stm32f4x.cfg -c "init; dump_image mainunit_bl.bin 0x20000000 0x4000; shutdown"
-uint8_t buf[1024*16] __attribute__((aligned (1024)));
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
+
+static void clock_setup(void)
+{
+	rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_USART1);
+}
+
+static void usart_setup(void)
+{
+	usart_set_baudrate(USART1, 115200);
+	usart_set_databits(USART1, 8);
+	usart_set_stopbits(USART1, USART_STOPBITS_1);
+	usart_set_mode(USART1, USART_MODE_TX);
+	usart_set_parity(USART1, USART_PARITY_NONE);
+	usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+
+	usart_enable(USART1);
+}
+
+static void gpio_setup(void)
+{
+	/* Setup GPIO pins for USART1 transmit. */
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
+
+	/* Setup USART1 TX pin as alternate function. */
+	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
+}
+
+size_t _write(int fd, char *ptr, int len)
+{
+	int i = 0;
+
+	if (fd > 2) {
+		return -1;
+	}
+
+	while (*ptr && (i < len)) {
+		usart_send_blocking(USART1, *ptr);
+		i++;
+		ptr++;
+	}
+	return i;
+}
 
 int main(void)
 {
-	uint8_t *flash = (uint8_t *) 0x08000000;
-	memcpy(buf, flash, sizeof(buf));
+	uint8_t buf[32];
+	int i, j;
 
-	while (1) {
-		__asm__("NOP");
+	clock_setup();
+	gpio_setup();
+	usart_setup();
+
+	// Dump only the bootloader
+	const uint32_t dump_size = 0x4000;
+	uint8_t *flash = (uint8_t *) 0x08000000;
+
+	for (uint32_t i = 0; i < dump_size; i++) {
+		uint8_t c = flash[i];
+
+		if (i % 16 == 0) {
+			printf("%08X: ", i);
+		}
+
+		printf("%02X", c);
+
+		if (i % 16 == 15) {
+			printf("\n");
+		} else {
+			printf(" ");
+		}
+	}
+
+	while (true) {
+		__asm__("nop");
 	}
 }

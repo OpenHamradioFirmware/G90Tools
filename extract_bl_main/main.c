@@ -33,6 +33,8 @@ static void gpio_setup(void)
 	/* Setup GPIO pins for USART1 transmit. */
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
 
+	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
+
 	/* Setup USART1 TX pin as alternate function. */
 	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
 }
@@ -68,6 +70,11 @@ int main(void)
 
 	for (uint32_t i = 0; i < dump_size; i++) {
 		uint8_t c = flash[i];
+
+		// Blink the blue led
+		if (i % 0x100 == 0) {
+			gpio_toggle(GPIOA, GPIO8);
+		}
 
 		if (i % 16 == 0) {
 			printf("%08X: ", i);

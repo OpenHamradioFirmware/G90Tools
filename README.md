@@ -69,6 +69,8 @@ make KEY=... TTYUSB=/dev/ttyUSB0 flash-encrypted
 - Wait for the dump to complete.
 - Convert hex to bin: `xxd -g 1 -r < bl.hex > bl.bin`
 
+Alternatively, an already encrypted binary is included and can be flashed to the target directly to simplify things. If going this route, simply run `make TTYUSB=/dev/ttyUSB0 flash-encrypted-prebuilt` from the `extract_bl` directory. Run the steps above to extract the bootloader binary. Then the key can then be recovered from the dump like so: `dd if=bl.bin skip=7496 bs=1 count=32 2> /dev/null > key.bin`.
+
 ## External tools
 
 - [DaleFarnsworth/g90updatefw](https://github.com/DaleFarnsworth/g90updatefw)
